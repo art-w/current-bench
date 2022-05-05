@@ -56,7 +56,6 @@ start-development: ./local-test-repo/.git update-version-info validate-env
 		--file=./environments/development.docker-compose.yaml \
 		--env-file=./environments/development.env \
 		up \
-		--remove-orphans \
 		--build
 
 .PHONY: stop-development

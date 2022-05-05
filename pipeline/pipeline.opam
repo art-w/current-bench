@@ -36,6 +36,8 @@ depends: [
   "ocluster" {= "dev"}
   "timere"
   "timere-parse"
+  "dream"
+  "tyxml"
 ]
 pin-depends: [
   [ "current.dev"        "git+https://github.com/ocurrent/ocurrent.git#d1c7cce458c816a62da61ba3915f9e9c77c8e89c"]
