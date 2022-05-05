@@ -1,0 +1,35 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: monospace;
+}
+
+h1 {
+  margin: 0;
+  padding: 1rem;
+}
+
+.benchmarks {
+  display: flex;
+  width: 100%;
+}
+
+.benchmark {
+  width: 50%;
+}
+
+.metrics {
+  /* position: relative; */
+}
+
+.metrics h3 {
+  position: absolute;
+  z-index: 1;
+  margin: 0;
+  padding: 0.5rem 0;
+  margin-left: 1rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 75%);
+}
+
+.current-bench_plot { display: none }

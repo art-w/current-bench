@@ -37,6 +37,8 @@ depends: [
   "omigrate"
   "timere"
   "timere-parse"
+  "dream"
+  "tyxml"
   "alcotest" {with-test}
   "alcotest-lwt" {with-test}
 ]
