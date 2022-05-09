@@ -299,7 +299,7 @@ let v ~config ~front ~server:mode ~sources conninfo () =
   in
   Logging.run
   @@ Lwt.choose [
-      Frontend.main ~front ~conninfo;
+      Frontend.main ~front ~db:conninfo;
       Current.Engine.thread engine;
       Current_web.run ~mode site;
   ]

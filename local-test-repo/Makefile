@@ -8,19 +8,19 @@ define BENCH_DATA_B1_T1_A
       "metrics": [
 	{
 	  "name": "grammarFunctor/parsing",
-	  "value": 0.19,
+	  "value": [0.13, 0.11, 0.19, 0.15],
 	  "units": "secs",
 	  "trend": "lower-is-better"
 	},
 	{
 	  "name": "grammarFunctor/typing",
-	  "value": 0.28,
+	  "value": [0.49, 0.35, 0.45],
 	  "units": "secs",
 	  "trend": "lower-is-better"
 	},
 	{
 	  "name": "grammarFunctor/generate",
-	  "value": 0.14,
+	  "value": 0.32,
 	  "units": "secs",
 	  "trend": "lower-is-better"
 	}
@@ -40,7 +40,7 @@ define BENCH_DATA_B1_T1_B
       "metrics": [
 	{
 	  "name": "ops_per_sec",
-	  "value": 690.0,
+	  "value": [670.0, 690.0, 680.0],
 	  "units": "num/sec",
 	  "description": "The number of awesome things done in a second",
 	  "trend": "higher-is-better"

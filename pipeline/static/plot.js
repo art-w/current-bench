@@ -6,13 +6,32 @@ window.onload = (function () {
     title: false,
     height: 150,
     margin: {
-      l: 100,
-      r: 20,
-      b: 20,
-      t: 20,
+      l: 50,
+      r: 50,
+      b: 50,
+      t: 5,
       pad: 5
+    },
 
+    xaxis: {
+      gridcolor: 'rgb(255,255,255)',
+      showgrid: true,
+      showline: false,
+      showticklabels: true,
+      tickcolor: 'rgb(125,125,125)',
+      ticks: 'outside',
+      zeroline: false
+    },
+
+    yaxis: {
+      showgrid: true,
+      showline: false,
+      tickcolor: 'rgb(125,125,125)',
+      gridcolor: 'rgba(220,220,220,0.5)',
+      ticks: 'outside',
+      zeroline: false
     }
+
   };
 
   var config = {

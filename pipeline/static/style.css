@@ -4,6 +4,23 @@ body {
   font-family: monospace;
 }
 
+#header {
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  width: 100%;
+  background-color: black;
+  color: white;
+  font-weight: bold;
+}
+
+#header a, #header a:visited {
+  color: white;
+  display: inline-block;
+  padding: 0.5rem;
+  text-decoration: none;
+}
+
 h1 {
   margin: 0;
   padding: 1rem;
@@ -11,10 +28,12 @@ h1 {
 
 .benchmarks {
   display: flex;
+  flex-wrap: wrap;
   width: 100%;
 }
 
 .benchmark {
+  max-width: 50%;
   width: 50%;
 }
 
@@ -26,8 +45,8 @@ h1 {
   position: absolute;
   z-index: 1;
   margin: 0;
-  padding: 0.5rem 0;
-  margin-left: 1rem;
+  padding: 0.25rem;
+  padding-left: 1rem;
   text-align: center;
   background: rgba(255, 255, 255, 75%);
 }

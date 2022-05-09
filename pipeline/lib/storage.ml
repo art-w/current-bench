@@ -146,7 +146,24 @@ let get_projects (db : Postgresql.connection) =
   Array.to_list results
   |> List.map (function [| repo_id |] -> repo_id | _ -> failwith "?")
 
-let get_projects ~conninfo = Db_util.with_db ~conninfo get_projects
+let get_projects ~db = Db_util.with_db ~conninfo:db get_projects
+
+let get_repos ~owner (db : Postgresql.connection) =
+  let owner = Db_util.string (owner ^ "/%") in
+  let query =
+    Fmt.str
+      {|SELECT DISTINCT repo_id
+        FROM benchmark_metadata
+        WHERE repo_id LIKE %s
+      |}
+      owner
+  in
+  let results = db#exec query in
+  let results = results#get_all in
+  Array.to_list results
+  |> List.map (function [| repo_id |] -> repo_id | _ -> failwith "?")
+
+let get_repos ~db ~owner = Db_util.with_db ~conninfo:db (get_repos ~owner)
 
 let get_prs ~repo_id (db : Postgresql.connection) =
   let repo_id = Db_util.string repo_id in
@@ -155,7 +172,9 @@ let get_prs ~repo_id (db : Postgresql.connection) =
       {|SELECT b.pull_number, b.worker, b.docker_image, b.pr_title, b.run_at, b.success, b.cancelled, b.reason
         FROM (SELECT pull_number, worker, docker_image, MAX(run_at) AS run_at
               FROM benchmark_metadata
-              WHERE pull_number IS NOT NULL AND repo_id=%s
+              WHERE pull_number IS NOT NULL
+                AND repo_id=%s
+                AND is_open_pr
               GROUP BY pull_number, worker, docker_image) AS p
         JOIN benchmark_metadata AS b
         ON ((p.pull_number, p.worker, p.docker_image, p.run_at)
@@ -177,7 +196,7 @@ let get_prs ~repo_id (db : Postgresql.connection) =
                  ((pr, worker, docker_image), title, run_at, status)
                | _ -> failwith "?")
 
-let get_prs ~conninfo repo_id = Db_util.with_db ~conninfo (get_prs ~repo_id)
+let get_prs ~db repo_id = Db_util.with_db ~conninfo:db (get_prs ~repo_id)
 
 let get_workers ~repo_id ~pr (db : Postgresql.connection) =
   let repo_id = Db_util.string repo_id in
@@ -202,8 +221,8 @@ let get_workers ~repo_id ~pr (db : Postgresql.connection) =
   |> List.map (function [| worker ; docker_image |] -> (worker, docker_image)
                | _ -> failwith "?")
 
-let get_workers ~conninfo ~repo_id ~pr =
-  Db_util.with_db ~conninfo (get_workers ~repo_id ~pr)
+let get_workers ~db ~repo_id ~pr =
+  Db_util.with_db ~conninfo:db (get_workers ~repo_id ~pr)
 
 
 
@@ -212,7 +231,7 @@ let get_benchmarks ~repo_id ~worker ~docker_image ~pr (db : Postgresql.connectio
   let docker_image = Db_util.string docker_image in
   let worker = Db_util.string worker in
   let pr = match pr with
-    | `PR pr -> "pull_number = " ^ Db_util.int (int_of_string pr)
+    | `PR pr -> "pull_number IS NULL OR pull_number = " ^ Db_util.int (int_of_string pr)
     | `Branch -> "pull_number IS NULL"
   in
   let query =
@@ -223,6 +242,7 @@ let get_benchmarks ~repo_id ~worker ~docker_image ~pr (db : Postgresql.connectio
           AND (%s)
           AND worker = %s
           AND docker_image = %s
+        ORDER BY run_at ASC
       |}
       repo_id
       pr
@@ -235,8 +255,16 @@ let get_benchmarks ~repo_id ~worker ~docker_image ~pr (db : Postgresql.connectio
   Printf.printf "got %i\n%!" (Array.length results);
   Array.to_list results
   |> List.map (function [| benchmark_name ; test_name ; commit ; json |] ->
+      (*
+      let commit = match String.split_on_char '.' commit with
+        | hd :: _ -> hd
+        | _ -> commit
+      in
+      *)
+let commit = String.sub commit 0 6 in
+                  Printf.printf "commit = %S\n%!" commit ;
                   (benchmark_name, test_name, commit, json)
                | _ -> failwith "?")
 
-let get_benchmarks ~conninfo ~repo_id ~pr ~worker ~docker_image =
-  Db_util.with_db ~conninfo (get_benchmarks ~repo_id ~pr ~worker ~docker_image)
+let get_benchmarks ~db ~repo_id ~pr ~worker ~docker_image =
+  Db_util.with_db ~conninfo:db (get_benchmarks ~repo_id ~pr ~worker ~docker_image)
