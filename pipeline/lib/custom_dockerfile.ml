@@ -107,6 +107,15 @@ let dockerfile ~base ~files =
 
 let dockerfile ~base ~files = Dockerfile.crunch (dockerfile ~base ~files)
 
+let current_first t =
+  let first = ref None in
+  let+ latest_value = t in
+  match !first with
+  | Some value -> value
+  | None ->
+      first := Some latest_value ;
+      latest_value
+
 let dockerfiles ~config ~repository =
   let custom_dockerfile = "bench.Dockerfile" in
   let+ files = get_all_files ~repository
@@ -121,7 +130,7 @@ let dockerfiles ~config ~repository =
           let image = conf.Config.image in
           let docker =
             `Contents
-              (let+ base = Config.find_image config image in
+              (let+ base = current_first @@ Config.find_image config image in
                dockerfile ~base ~files)
           in
           (image, docker)
